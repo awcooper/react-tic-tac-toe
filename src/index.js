@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+const NUMBER_OF_ROWS = 3;
+const NUMBER_OF_COLS = 3;
+
 class Square extends React.Component {
   render() {
     return (
@@ -62,6 +65,8 @@ class Game extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
+        row: null,
+        col: null
       }],
       xIsNext: true,
       stepNumber: 0,
@@ -85,7 +90,9 @@ class Game extends React.Component {
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
       history: history.concat([{
-        squares: squares
+        squares: squares,
+        row: Math.floor(i / NUMBER_OF_ROWS) + 1,
+        col: i % NUMBER_OF_COLS + 1
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -99,7 +106,7 @@ class Game extends React.Component {
     const winner = calculateWinner(current.squares);
     const moves = history.map((step, move) => {
       const desc = move ?
-        'Go to move #' + move :
+        `Move #${move}: (${step.row},${step.col})` :
         'Go to game start';
       return (
         <li>
