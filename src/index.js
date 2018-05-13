@@ -79,14 +79,16 @@ class Game extends React.Component {
       }],
       xIsNext: true,
       stepNumber: 0,
-      historyAsc: true
+      historyAsc: true,
+      activeIndex: null
     };
   }
 
   jumpTo(step) {
-    this.setState({
+     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
+      activeIndex: step
     });
   }
 
@@ -106,6 +108,7 @@ class Game extends React.Component {
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
+      activeIndex: null
     });
   }
 
@@ -121,12 +124,15 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
     const moves = history.map((step, move) => {
+      const font = this.state.activeIndex === move ? "bold" : ""
       const desc = step.row != null ?
         `(${step.row},${step.col})` :
         'Go to game start';
       return (
         <li>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button style={{
+          fontWeight: font
+        }} onClick={() => this.jumpTo(move)}>{desc}</button>
         </li>
       );
     });
