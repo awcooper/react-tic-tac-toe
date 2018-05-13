@@ -70,6 +70,7 @@ class Game extends React.Component {
       }],
       xIsNext: true,
       stepNumber: 0,
+      historyAsc: true 
     };
   }
 
@@ -99,14 +100,20 @@ class Game extends React.Component {
     });
   }
 
+  flipHistoryOrder(){
+  	this.setState({
+  		historyAsc: !this.state.historyAsc
+  	})
+  	this.render()
+  }
 
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
     const moves = history.map((step, move) => {
-      const desc = move ?
-        `Move #${move}: (${step.row},${step.col})` :
+      const desc = step.row != null ?
+        `(${step.row},${step.col})` :
         'Go to game start';
       return (
         <li>
@@ -115,6 +122,9 @@ class Game extends React.Component {
       );
     });
 
+    if (this.state.historyAsc){
+    	moves.reverse()
+    }
 
     let status;
     if (winner) {
@@ -134,6 +144,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <button onClick={() => this.flipHistoryOrder()}>flip?</button>
           <ol>{moves}</ol>
         </div>
       </div>
