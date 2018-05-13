@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import chunk from 'lodash/chunk';
+
 
 const NUMBER_OF_ROWS = 3;
 const NUMBER_OF_COLS = 3;
@@ -26,7 +28,6 @@ class Board extends React.Component {
   }
 
   renderSquare(i) {
-
     return (
       <Square
       value={this.props.squares[i]}
@@ -38,23 +39,21 @@ class Board extends React.Component {
   render() {
     return (
       <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
+            { chunk(new Array(NUMBER_OF_ROWS * NUMBER_OF_COLS).fill(0),
+        NUMBER_OF_ROWS)
+        .map((row, i) => {
+          return (
+            <div className="board-row">
+                		{row.map((col, j) => {
+              return this.renderSquare(i * NUMBER_OF_COLS + j);
+            })}
+            </div>
+          )
+        })
+      }
         </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
+
+    )
   }
 }
 
@@ -71,7 +70,7 @@ class Game extends React.Component {
       }],
       xIsNext: true,
       stepNumber: 0,
-      historyAsc: true 
+      historyAsc: true
     };
   }
 
@@ -101,11 +100,11 @@ class Game extends React.Component {
     });
   }
 
-  flipHistoryOrder(){
-  	this.setState({
-  		historyAsc: !this.state.historyAsc
-  	})
-  	this.render()
+  flipHistoryOrder() {
+    this.setState({
+      historyAsc: !this.state.historyAsc
+    })
+    this.render()
   }
 
   render() {
@@ -123,15 +122,15 @@ class Game extends React.Component {
       );
     });
 
-    if (this.state.historyAsc){
-    	moves.reverse()
+    if (this.state.historyAsc) {
+      moves.reverse()
     }
 
     let status;
     if (winner) {
       status = 'Winner: ' + winner;
-    } else if (history[NUMBER_OF_COLS * NUMBER_OF_ROWS]){
-    	status = "It's a Draw!!";
+    } else if (history[NUMBER_OF_COLS * NUMBER_OF_ROWS]) {
+      status = "It's a Draw!!";
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
