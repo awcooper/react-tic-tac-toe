@@ -8,9 +8,12 @@ const NUMBER_OF_ROWS = 3;
 const NUMBER_OF_COLS = 3;
 
 class Square extends React.Component {
+
   render() {
     return (
-      <button className="square" onClick={() => this.props.onClick()}>
+      <button className="square" style={{
+        background: this.props.color
+      }}  onClick={() => this.props.onClick()}>
         {this.props.value}
       </button>
     );
@@ -27,16 +30,21 @@ class Board extends React.Component {
     };
   }
 
-  renderSquare(i) {
+  renderSquare(i, isWinner) {
+    const squareColor = isWinner ? "red" : "white"
     return (
       <Square
       value={this.props.squares[i]}
+      color={squareColor}
       onClick={() => this.props.onClick(i)}
       />
     );
   }
 
   render() {
+    const winner = calculateWinner(this.props.squares);
+    const winnerSquares = winner ? winner[1] : [];
+    var index;
     return (
       <div>
             { chunk(new Array(NUMBER_OF_ROWS * NUMBER_OF_COLS).fill(0),
@@ -45,7 +53,8 @@ class Board extends React.Component {
           return (
             <div className="board-row">
                 		{row.map((col, j) => {
-              return this.renderSquare(i * NUMBER_OF_COLS + j);
+              index = i * NUMBER_OF_COLS + j;
+              return this.renderSquare(index, winnerSquares.includes(index));
             })}
             </div>
           )
@@ -92,15 +101,15 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([{
         squares: squares,
-        row: Math.floor(i / NUMBER_OF_ROWS) + 1,
-        col: i % NUMBER_OF_COLS + 1
+        row: Math.floor(i / NUMBER_OF_ROWS),
+        col: i % NUMBER_OF_COLS
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
     });
   }
 
-  flipHistoryOrder() {
+  toggleHistoryOrder() {
     this.setState({
       historyAsc: !this.state.historyAsc
     })
@@ -128,7 +137,7 @@ class Game extends React.Component {
 
     let status;
     if (winner) {
-      status = 'Winner: ' + winner;
+      status = 'Winner: ' + winner[0];
     } else if (history[NUMBER_OF_COLS * NUMBER_OF_ROWS]) {
       status = "It's a Draw!!";
     } else {
@@ -146,7 +155,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <button onClick={() => this.flipHistoryOrder()}>flip?</button>
+          <button onClick={() => this.toggleHistoryOrder()}>flip?</button>
           <ol>{moves}</ol>
         </div>
       </div>
@@ -168,7 +177,7 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return [squares[a], lines[i]];
     }
   }
   return null;
