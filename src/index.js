@@ -26,6 +26,7 @@ class Board extends React.Component {
   }
 
   renderSquare(i) {
+
     return (
       <Square
       value={this.props.squares[i]}
@@ -129,6 +130,8 @@ class Game extends React.Component {
     let status;
     if (winner) {
       status = 'Winner: ' + winner;
+    } else if (history[NUMBER_OF_COLS * NUMBER_OF_ROWS]){
+    	status = "It's a Draw!!";
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
